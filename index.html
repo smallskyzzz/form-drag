@@ -4,10 +4,19 @@
   <meta charset="UTF-8">
   <title>Title</title>
   <link rel="stylesheet" href="./static/css/bootstrap.min.css">
+  <link href="./static/css/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet">
   <link rel="stylesheet" href="./static/css/reset.css">
   <link rel="stylesheet" href="./static/css/index.css">
 </head>
 <body>
+<!--弹出框-->
+<div class="alert alert-danger alert-dismissable">
+  <button type="button" class="close" data-dismiss="alert"
+          aria-hidden="true">
+    &times;
+  </button>
+  错误！请进行一些更改。
+</div>
 <div class="content">
   <div class="col-lg-6 content-left">
     <h2>拖拽区域</h2>
@@ -35,6 +44,7 @@
     <div id="createForm" class="create-form" ondrop="drop(event)" ondragover="allowDrop(event)" style="overflow: hidden"></div>
   </div>
 </div>
+
 <script src="./static/js/jquery-3.4.1.min.js"></script>
 <script>
   var domSplit = $('<div class="dom-split" style="height: 20px;background-color: #eee"></div>')
@@ -56,17 +66,66 @@
       var dom = $('#'+data).clone()
       // 设置为不可拖拽
       dom[0].setAttribute('draggable', 'false')
+      itemHover(dom)
       // 判断拖拽后的位置
       if($(ev.target).hasClass('dom-split')) {
           // 如果在两块中间
-          $(ev.target).prev().prepend(domSplit.clone()).prepend(dom)
+          $(ev.target).prev().after(dom).after(domSplit.clone())
       } else {
           $(ev.target).append(dom).append(domSplit.clone())
       }
       console.log("拖放成功了");
   }
 
-  
+  // 拖拽生成后的hover事件
+  function itemHover(dom) {
+      var domDelete = '<div class="item-delete" onclick="itemDelete(this)"><i class="fa fa-times"></i></div>'
+      var domDown = '<div class="item-down" onclick="itemDown(this)"><i class="fa fa-chevron-down"></i></div>'
+      var domUp = '<div class="item-up" onclick="itemUp(this)"><i class="fa fa-chevron-up"></i></div>'
+      dom.hover(function () {
+          dom.append(domDelete).append(domDown).append(domUp)
+      }, function () {
+          dom.find('.item-delete').remove()
+          dom.find('.item-down').remove()
+          dom.find('.item-up').remove()
+      })
+  }
+
+  // 删除表单项
+  function itemDelete(self) {
+      $(self).parents('.form-group').next().remove()
+      $(self).parents('.form-group').remove()
+  }
+
+  // 表单上移
+  function itemUp(self) {
+      var item = $(self).parents('.form-group')
+      if (!item.prev().length) {
+          common.graduallyAlert('已在最上方！')
+      } else {
+          var itemPrev = item.prev().prev()
+          var itemNext = item.next()
+          itemPrev.before(item).before(itemNext)
+      }
+  }
+
+  // 表单下移
+  function itemDown(self) {
+      var item = $(self).parents('.form-group')
+      if (!item.next().next().length) {
+          common.graduallyAlert('已在最下方！')
+      } else {
+          var itemNext = item.next().next().next()
+          itemNext.after(item.next()).after(item)
+      }
+  }
+
+  // 通用方法
+  var common = {
+      graduallyAlert: function (info) {
+          $('.alert').hide().text(info).show().fadeOut(2000)
+      }
+  }
 </script>
 </body>
 </html>

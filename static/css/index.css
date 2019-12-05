@@ -1,3 +1,12 @@
+body {
+  position: relative;
+}
+body .alert {
+  position: fixed;
+  top: 0;
+  right: 10px;
+  display: none;
+}
 body .content {
   height: 100%;
 }
@@ -28,7 +37,30 @@ body .content .content-right .create-form {
   margin-top: 20px;
 }
 body .content .content-right .create-form .form-group {
+  position: relative;
   overflow: hidden;
   margin-bottom: 0;
+}
+body .content .content-right .create-form .form-group .item-delete,
+body .content .content-right .create-form .form-group .item-down,
+body .content .content-right .create-form .form-group .item-up {
+  position: absolute;
+  top: 0;
+  width: 20px;
+  height: 20px;
+  background-color: #8c8c8c;
+  color: #222;
+  opacity: 0.6;
+  text-align: center;
+  cursor: pointer;
+}
+body .content .content-right .create-form .form-group .item-delete {
+  right: 0;
+}
+body .content .content-right .create-form .form-group .item-down {
+  right: 20px;
+}
+body .content .content-right .create-form .form-group .item-up {
+  right: 40px;
 }
 /*# sourceMappingURL=index.css.map */

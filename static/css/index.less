@@ -1,4 +1,14 @@
 body{
+  position: relative;
+  .alert{
+    position: fixed;
+    top: 0;
+    right: 10px;
+    display: none;
+  }
+}
+
+body{
   .content{
     height: 100%;
     .content-left,.content-right{
@@ -24,8 +34,29 @@ body{
         height: calc(100% - 30px);
         margin-top: 20px;
         .form-group{
+          position: relative;
           overflow: hidden;
           margin-bottom: 0;
+          .item-delete, .item-down, .item-up{
+            position: absolute;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            background-color: #8c8c8c;
+            color: #222;
+            opacity: .6;
+            text-align: center;
+            cursor: pointer;
+          }
+          .item-delete{
+            right: 0;
+          }
+          .item-down{
+            right: 20px;
+          }
+          .item-up{
+            right: 40px;
+          }
         }
       }
     }
