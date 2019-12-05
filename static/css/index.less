@@ -1,0 +1,33 @@
+body{
+  .content{
+    height: 100%;
+    .content-left,.content-right{
+      height: 100%;
+      padding-top: 20px;
+      padding-bottom: 20px;
+      border: 1px solid aqua;
+      h2{
+        text-align: center;
+        line-height: 30px;
+      }
+      .form{
+        overflow: hidden;
+        margin-top: 20px;
+        .form-group{
+          overflow: hidden;
+          margin-bottom: 15px;
+        }
+      }
+    }
+    .content-right{
+      .create-form{
+        height: calc(100% - 30px);
+        margin-top: 20px;
+        .form-group{
+          overflow: hidden;
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <link rel="stylesheet" href="./static/css/bootstrap.min.css">
+  <link rel="stylesheet" href="./static/css/reset.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+</head>
+<body>
+<div class="content">
+  <div class="col-lg-6 content-left">
+    <h2>拖拽区域</h2>
+    <div class="form">
+      <div id="f1" class="form-group" draggable="true" ondragstart="drag(event)">
+        <div class="col-sm-2">
+          <input type="text" class="form-control" value="姓名">
+        </div>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" placeholder="请输入姓名">
+        </div>
+      </div>
+      <div id="f2" class="form-group" draggable="true" ondragstart="drag(event)">
+        <div class="col-sm-2">
+          <input type="text" class="form-control" value="">
+        </div>
+        <div class="col-sm-10">
+          <select class="form-control" placeholder="请输入姓名"></select>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6 content-right">
+    <h2>生成区域</h2>
+    <div id="createForm" class="create-form" ondrop="drop(event)" ondragover="allowDrop(event)" style="overflow: hidden"></div>
+  </div>
+</div>
+<script src="./static/js/jquery-3.4.1.min.js"></script>
+<script>
+  var domSplit = $('<div class="dom-split" style="height: 20px;background-color: #eee"></div>')
+  function drag(ev) {
+      //重写dragover事件的默认行为，将无效放置目标设置为可放置目标
+      ev.dataTransfer.setData("Text",ev.target.id); // 拖放的数据类型和值
+  }
+  function allowDrop(ev){
+      //重写dragover事件的默认行为，将无效放置目标设置为可放置目标
+      ev.preventDefault();
+      // console.log("正在目标中移动");
+  }
+  function drop(ev){
+      ev.preventDefault();
+      //保存在dataTransfer对象中的数据只能在drop事件处理程序中读取
+      //元素拖到放置目标中会触发drop事件。
+      var data = ev.dataTransfer.getData("Text");
+      // clone方法添加元素的拷贝
+      var dom = $('#'+data).clone()
+      // 设置为不可拖拽
+      dom[0].setAttribute('draggable', 'false')
+      // 判断拖拽后的位置
+      if($(ev.target).hasClass('dom-split')) {
+          // 如果在两块中间
+          $(ev.target).prev().prepend(domSplit.clone()).prepend(dom)
+      } else {
+          $(ev.target).append(dom).append(domSplit.clone())
+      }
+      console.log("拖放成功了");
+  }
+
+  
+</script>
+</body>
+</html>
