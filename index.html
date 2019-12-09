@@ -29,7 +29,7 @@
           <input type="text" class="form-control" placeholder="请输入姓名">
         </div>
       </div>
-      <div id="f2" class="form-group" draggable="true" ondragstart="drag(event)">
+      <div id="f2" class="form-group" draggable="true" ondragstart="drag(event)" data-index="1">
         <div class="col-sm-2">
           <input type="text" class="form-control" value="">
         </div>
@@ -37,7 +37,7 @@
           <select class="form-control"></select>
         </div>
         <div class="col-sm-1 btn-wrapper">
-          <button class="btn btn-primary" data-toggle="modal" data-target="#myModal">添加项</button>
+          <button class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="common.setIndex(this)">添加项</button>
         </div>
       </div>
     </div>
@@ -68,7 +68,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-        <button type="button" class="btn btn-primary" onclick="common.submitModal(this)">提交</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="common.submitModal(this)">提交</button>
       </div>
     </div>
   </div>
@@ -77,6 +77,8 @@
 <script src="./static/js/jquery-3.4.1.min.js"></script>
 <script src="./static/js/bootstrap.min.js"></script>
 <script>
+  // 用于标记模态框针对那个item
+  var index = ''
   var domSplit = $('<div class="dom-split" style="height: 20px;background-color: #eee"></div>')
   // 模态框中的一行
   var domItem = $('.modal-body .item').clone()
@@ -99,7 +101,14 @@
       // 设置为不可拖拽
       dom[0].setAttribute('draggable', 'false')
       itemHover(dom)
-      console.log(ev.target)
+      // 判断拖拽对象中有无按钮
+      if(dom.find('button').length){
+          dom.find('.btn-wrapper').prev().removeClass('col-sm-9').addClass('col-sm-10')
+          dom.find('.btn-wrapper').remove()
+      }
+      // 将input替换成label
+      var labelText = dom.find('.col-sm-2 input').val()
+      dom.find('.col-sm-2 input').replaceWith('<label class="form-control">' + labelText + '</label>')
       // 判断拖拽后的位置
       if($(ev.target).hasClass('dom-split')) {
           // 如果在两块中间
@@ -172,9 +181,25 @@
       // 模态框提交
       submitModal: function (me) {
           var optionArr = []
+          // 取到模态框中的值
           Array.from($(me).parents('.modal').find('.item')).forEach(function (value) {
               optionArr.push($(value).find('input').val())
           })
+          // 将模态框中的值赋给对应项
+          Array.from($('.form .form-group')).forEach(function (value) {
+              if($(value).data('index') === index){
+                  optionArr.forEach(function (item, itemIndex) {
+                      if(itemIndex === 0){
+                          $(value).find('select').html('')
+                      }
+                      $(value).find('select').append('<option>' + item + '</option>')
+                  })
+              }
+          })
+      },
+      // 设置index
+      setIndex: function (me) {
+          index = $(me).parents('.form-group').data('index')
       }
   }
 </script>
