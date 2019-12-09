@@ -44,7 +44,11 @@
   </div>
   <div class="col-lg-6 content-right">
     <h2>生成区域</h2>
-    <div id="createForm" class="create-form" ondrop="drop(event)" ondragover="allowDrop(event)" style="overflow: hidden"></div>
+    <div id="createForm" class="create-form" ondrop="drop(event)" ondragover="allowDrop(event)" style="overflow: auto"></div>
+    <div class="right-bottom">
+      <button class="btn btn-primary col-sm-2 col-sm-offset-2">保存</button>
+      <button class="btn btn-primary col-sm-2 col-sm-offset-4" onclick="common.clearCreateForm()">清空</button>
+    </div>
   </div>
 </div>
 
@@ -200,6 +204,10 @@
       // 设置index
       setIndex: function (me) {
           index = $(me).parents('.form-group').data('index')
+      },
+      // 清空生成区域
+      clearCreateForm: function () {
+          $('#createForm').html('')
       }
   }
 </script>

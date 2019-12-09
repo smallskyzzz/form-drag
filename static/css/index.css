@@ -46,8 +46,11 @@ body .content .content-left .btn-wrapper {
 body .content .content-left .btn-wrapper .btn {
   width: 100%;
 }
+body .content .content-right {
+  position: relative;
+}
 body .content .content-right .create-form {
-  height: calc(100% - 30px);
+  height: calc(100% - 70px);
   margin-top: 20px;
 }
 body .content .content-right .create-form .form-group {
@@ -76,5 +79,13 @@ body .content .content-right .create-form .form-group .item-down {
 }
 body .content .content-right .create-form .form-group .item-up {
   right: 40px;
+}
+body .content .content-right .right-bottom {
+  position: absolute;
+  bottom: 0;
+  width: calc(100% - 30px);
+  height: 40px;
+  padding-top: 6px;
+  background-color: #ccc;
 }
 /*# sourceMappingURL=index.css.map */
