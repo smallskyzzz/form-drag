@@ -7,6 +7,14 @@ body .alert {
   right: 10px;
   display: none;
 }
+body .modal .modal-body .item {
+  margin: 5px 0;
+  overflow-y: auto;
+}
+body .modal .modal-body .item .delete-row {
+  line-height: 34px;
+  cursor: pointer;
+}
 body .content {
   height: 100%;
 }
@@ -31,6 +39,12 @@ body .content .content-left .form .form-group,
 body .content .content-right .form .form-group {
   overflow: hidden;
   margin-bottom: 15px;
+}
+body .content .content-left .btn-wrapper {
+  padding: 0 15px 0 0;
+}
+body .content .content-left .btn-wrapper .btn {
+  width: 100%;
 }
 body .content .content-right .create-form {
   height: calc(100% - 30px);
