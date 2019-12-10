@@ -23,18 +23,34 @@
     <div class="form">
       <div id="f1" class="form-group" draggable="true" ondragstart="drag(event)">
         <div class="col-sm-2">
-          <input type="text" class="form-control" value="姓名">
+          <input type="text" class="form-control" value="输入框">
         </div>
         <div class="col-sm-10">
-          <input type="text" class="form-control" placeholder="请输入姓名">
+          <input type="text" class="form-control" placeholder="请输入">
         </div>
       </div>
       <div id="f2" class="form-group" draggable="true" ondragstart="drag(event)" data-index="1">
         <div class="col-sm-2">
-          <input type="text" class="form-control" value="">
+          <input type="text" class="form-control" value="下拉框">
         </div>
         <div class="col-sm-9">
           <select class="form-control"></select>
+        </div>
+        <div class="col-sm-1 btn-wrapper">
+          <button class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="common.setIndex(this)">添加项</button>
+        </div>
+      </div>
+      <div id="f3" class="form-group" draggable="true" ondragstart="drag(event)" data-index="2">
+        <div class="col-sm-2">
+          <input type="text" class="form-control" value="单选框">
+        </div>
+        <div class="col-sm-9" style="padding-top: 6px">
+          <label class="radio-inline option">
+            <input type="radio" value="option1">选项1
+          </label>
+          <label class="radio-inline option">
+            <input type="radio"  value="option2">选项2
+          </label>
         </div>
         <div class="col-sm-1 btn-wrapper">
           <button class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="common.setIndex(this)">添加项</button>
@@ -60,12 +76,13 @@
         <h4 class="modal-title" id="myModalLabel">模态框（Modal）标题</h4>
       </div>
       <div class="modal-body" style="overflow-y: auto">
-        <div class="item">
-          <div class="col-sm-11">
-            <input type="text" class="form-control">
-          </div>
-          <div class="col-sm-1 delete-row" onclick="deleteRow(this)">X</div>
-        </div>
+<!--        <div class="item">-->
+<!--          <div class="col-sm-11">-->
+<!--            <input type="text" class="form-control">-->
+<!--          </div>-->
+<!--          <div class="col-sm-1 delete-row" onclick="deleteRow(this)">X</div>-->
+<!--        </div>-->
+        <div class="items"></div>
         <div class="col-sm-12">
           <button class="btn btn-primary" onclick="addRow(this)">添加一行</button>
         </div>
@@ -84,8 +101,6 @@
   // 用于标记模态框针对那个item
   var index = ''
   var domSplit = $('<div class="dom-split" style="height: 20px;background-color: #eee"></div>')
-  // 模态框中的一行
-  var domItem = $('.modal-body .item').clone()
   function drag(ev) {
       //重写dragover事件的默认行为，将无效放置目标设置为可放置目标
       ev.dataTransfer.setData("Text",ev.target.id); // 拖放的数据类型和值
@@ -168,7 +183,7 @@
 
   // 模态框添加一行
   function addRow(me) {
-      $(me).parents('.col-sm-12').before('<div class="item"><div class="col-sm-11"><input type="text" class="form-control"></div><div class="col-sm-1 delete-row" onclick="deleteRow(this)">X</div></div>')
+      $(me).parents('.col-sm-12').siblings('.items').append('<div class="item"><div class="col-sm-11"><input type="text" class="form-control"></div><div class="col-sm-1 delete-row" onclick="deleteRow(this)">X</div></div>')
   }
 
   // 模态框删除一行
@@ -193,17 +208,31 @@
           Array.from($('.form .form-group')).forEach(function (value) {
               if($(value).data('index') === index){
                   optionArr.forEach(function (item, itemIndex) {
-                      if(itemIndex === 0){
-                          $(value).find('select').html('')
+                      // 目标为select
+                      if($(value).find('select').length !== 0){
+                          if(itemIndex === 0){
+                              $(value).find('select').html('')
+                          }
+                          $(value).find('select').append('<option class="option">' + item + '</option>')
                       }
-                      $(value).find('select').append('<option>' + item + '</option>')
+                      // 目标为单选
+                      if($(value).find('.radio-inline').length !== 0){
+                          if(itemIndex === 0){
+                              $(value).find('.col-sm-9').html('')
+                          }
+                          $(value).find('.col-sm-9').append('<label class="radio-inline option"><input type="radio"  value="option2">' + item + '</label>')
+                      }
                   })
               }
           })
       },
-      // 设置index
+      // 设置index,并将对应的值加入到modal中
       setIndex: function (me) {
           index = $(me).parents('.form-group').data('index')
+          $('.items').html('')
+          Array.from($(me).parents('.btn-wrapper').siblings('.col-sm-9').find('.option')).forEach(function (value) {
+              $('.modal-body .items').append('<div class="item"><div class="col-sm-11"><input type="text" class="form-control" value="'+ $(value).text().trim() +'"></div><div class="col-sm-1 delete-row" onclick="deleteRow(this)">X</div></div>')
+          })
       },
       // 清空生成区域
       clearCreateForm: function () {
