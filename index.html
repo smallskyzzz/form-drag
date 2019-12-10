@@ -56,6 +56,22 @@
           <button class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="common.setIndex(this)">添加项</button>
         </div>
       </div>
+      <div id="f4" class="form-group" draggable="true" ondragstart="drag(event)" data-index="3">
+        <div class="col-sm-2">
+          <input type="text" class="form-control" value="多选框">
+        </div>
+        <div class="col-sm-9" style="padding-top: 6px">
+          <label class="checkbox-inline option">
+            <input type="checkbox" id="inlineCheckbox1" value="option1">选项3
+          </label>
+          <label class="checkbox-inline option">
+            <input type="checkbox" id="inlineCheckbox2" value="option2">选项4
+          </label>
+        </div>
+        <div class="col-sm-1 btn-wrapper">
+          <button class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="common.setIndex(this)">添加项</button>
+        </div>
+      </div>
     </div>
   </div>
   <div class="col-lg-6 content-right">
@@ -221,6 +237,13 @@
                               $(value).find('.col-sm-9').html('')
                           }
                           $(value).find('.col-sm-9').append('<label class="radio-inline option"><input type="radio"  value="option2">' + item + '</label>')
+                      }
+                      // 目标为多选
+                      if($(value).find('.checkbox-inline').length !== 0){
+                          if(itemIndex === 0){
+                              $(value).find('.col-sm-9').html('')
+                          }
+                          $(value).find('.col-sm-9').append('<label class="checkbox-inline option"><input type="checkbox"  value="option2">' + item + '</label>')
                       }
                   })
               }
