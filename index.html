@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Title</title>
   <link rel="stylesheet" href="./static/css/bootstrap.min.css">
+  <link rel="stylesheet" href="./static/css/bootstrap-datetimepicker.min.css">
   <link href="./static/css/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet">
   <link rel="stylesheet" href="./static/css/reset.css">
   <link rel="stylesheet" href="./static/css/index.css">
@@ -29,7 +30,15 @@
           <input type="text" class="form-control" placeholder="请输入">
         </div>
       </div>
-      <div id="f2" class="form-group" draggable="true" ondragstart="drag(event)" data-index="1">
+      <div id="f2" class="form-group" draggable="true" ondragstart="drag(event)">
+        <div class="col-sm-2">
+          <input type="text" class="form-control" value="请选择时间">
+        </div>
+        <div class="col-sm-10">
+          <input id="pickTime" type="text" class="form-control time-picker">
+        </div>
+      </div>
+      <div id="f3" class="form-group" draggable="true" ondragstart="drag(event)" data-index="1">
         <div class="col-sm-2">
           <input type="text" class="form-control" value="下拉框">
         </div>
@@ -40,7 +49,7 @@
           <button class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="common.setIndex(this)">添加项</button>
         </div>
       </div>
-      <div id="f3" class="form-group" draggable="true" ondragstart="drag(event)" data-index="2">
+      <div id="f4" class="form-group" draggable="true" ondragstart="drag(event)" data-index="2">
         <div class="col-sm-2">
           <input type="text" class="form-control" value="单选框">
         </div>
@@ -56,7 +65,7 @@
           <button class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="common.setIndex(this)">添加项</button>
         </div>
       </div>
-      <div id="f4" class="form-group" draggable="true" ondragstart="drag(event)" data-index="3">
+      <div id="f5" class="form-group" draggable="true" ondragstart="drag(event)" data-index="3">
         <div class="col-sm-2">
           <input type="text" class="form-control" value="多选框">
         </div>
@@ -70,6 +79,14 @@
         </div>
         <div class="col-sm-1 btn-wrapper">
           <button class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="common.setIndex(this)">添加项</button>
+        </div>
+      </div>
+      <div id="f6" class="form-group" draggable="true" ondragstart="drag(event)">
+        <div class="col-sm-2">
+          <input type="text" class="form-control" value="文本框">
+        </div>
+        <div class="col-sm-10">
+          <textarea type="text" class="form-control" placeholder="请输入"></textarea>
         </div>
       </div>
     </div>
@@ -113,6 +130,8 @@
 
 <script src="./static/js/jquery-3.4.1.min.js"></script>
 <script src="./static/js/bootstrap.min.js"></script>
+<script src="./static/js/bootstrap-datetimepicker.min.js"></script>
+<script src="./static/js/bootstrap-datetimepicker.zh-CN.js"></script>
 <script>
   // 用于标记模态框针对那个item
   var index = ''
@@ -136,6 +155,15 @@
       // 设置为不可拖拽
       dom[0].setAttribute('draggable', 'false')
       itemHover(dom)
+      // 替换拖拽该项id
+      setTimeout(function () {
+          dom.attr('id', 'index' + (dom.index()+2) / 2)
+          // 如果有日期选择框
+          if(dom.find('.time-picker').length !== 0){
+              dom.find('.time-picker').attr('id', 'timePicker' + (dom.index()+2) / 2)
+              common.init('timePicker' + (dom.index()+2) / 2)
+          }
+      }, 0)
       // 判断拖拽对象中有无按钮
       if(dom.find('button').length){
           dom.find('.btn-wrapper').prev().removeClass('col-sm-9').addClass('col-sm-10')
@@ -209,6 +237,21 @@
 
   // 通用方法
   var common = {
+      // 时间控件初始化
+      init: function(id){
+          $("#"+id).datetimepicker({//选择年月日
+              format: 'yyyy-mm-dd',
+              language: 'zh-CN',
+              weekStart: 1,
+              todayBtn: 1,//显示‘今日’按钮
+              autoclose: 1,
+              todayHighlight: 1,
+              // startView: 2,
+              // minView: 2,  //Number, String. 默认值：0, 'hour'，日期时间选择器所能够提供的最精确的时间选择视图。
+              clearBtn:true,//清除按钮
+              forceParse: 0
+          });
+      },
       // 警告提示框
       graduallyAlert: function (info) {
           $('.alert').hide().text(info).show().fadeOut(2000)
@@ -262,6 +305,10 @@
           $('#createForm').html('')
       }
   }
+
+  $(function () {
+      common.init('pickTime', '')
+  })
 </script>
 </body>
 </html>
