@@ -306,7 +306,10 @@
                       if($(value).data('type') === 3 || $(value).data('type') === 4 || $(value).data('type') === 5) {
                           var arr = []
                           Array.from($(value).find('.option')).forEach(function (itemValue) {
-                              arr.push($(itemValue).text())
+                              // arr.push($(itemValue).text())
+                              arr.push({
+                                  fieldDictName: $(itemValue).text()
+                              })
                           })
                           return arr
                       }
