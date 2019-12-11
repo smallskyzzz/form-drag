@@ -22,7 +22,7 @@
   <div class="col-lg-6 content-left">
     <h2>拖拽区域</h2>
     <div class="form">
-      <div id="f1" class="form-group" draggable="true" ondragstart="drag(event)">
+      <div id="f1" class="form-group" draggable="true" ondragstart="drag(event)" data-type="1">
         <div class="col-sm-2">
           <input type="text" class="form-control" value="输入框">
         </div>
@@ -30,7 +30,7 @@
           <input type="text" class="form-control" placeholder="请输入">
         </div>
       </div>
-      <div id="f2" class="form-group" draggable="true" ondragstart="drag(event)">
+      <div id="f2" class="form-group" draggable="true" ondragstart="drag(event)" data-type="2">
         <div class="col-sm-2">
           <input type="text" class="form-control" value="请选择时间">
         </div>
@@ -38,7 +38,7 @@
           <input id="pickTime" type="text" class="form-control time-picker">
         </div>
       </div>
-      <div id="f3" class="form-group" draggable="true" ondragstart="drag(event)" data-index="1">
+      <div id="f3" class="form-group" draggable="true" ondragstart="drag(event)" data-index="1" data-type="3">
         <div class="col-sm-2">
           <input type="text" class="form-control" value="下拉框">
         </div>
@@ -49,39 +49,31 @@
           <button class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="common.setIndex(this)">添加项</button>
         </div>
       </div>
-      <div id="f4" class="form-group" draggable="true" ondragstart="drag(event)" data-index="2">
+      <div id="f4" class="form-group" draggable="true" ondragstart="drag(event)" data-index="2" data-type="4">
         <div class="col-sm-2">
           <input type="text" class="form-control" value="单选框">
         </div>
         <div class="col-sm-9" style="padding-top: 6px">
-          <label class="radio-inline option">
-            <input type="radio" value="option1">选项1
-          </label>
-          <label class="radio-inline option">
-            <input type="radio"  value="option2">选项2
-          </label>
+          <label class="radio-inline option"><input type="radio" name="optionsRadiosinline" value="option1" checked>选项1</label>
+          <label class="radio-inline option"><input type="radio" name="optionsRadiosinline" value="option2">选项2</label>
         </div>
         <div class="col-sm-1 btn-wrapper">
           <button class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="common.setIndex(this)">添加项</button>
         </div>
       </div>
-      <div id="f5" class="form-group" draggable="true" ondragstart="drag(event)" data-index="3">
+      <div id="f5" class="form-group" draggable="true" ondragstart="drag(event)" data-index="3" data-type="5">
         <div class="col-sm-2">
           <input type="text" class="form-control" value="多选框">
         </div>
         <div class="col-sm-9" style="padding-top: 6px">
-          <label class="checkbox-inline option">
-            <input type="checkbox" id="inlineCheckbox1" value="option1">选项3
-          </label>
-          <label class="checkbox-inline option">
-            <input type="checkbox" id="inlineCheckbox2" value="option2">选项4
-          </label>
+          <label class="checkbox-inline option"><input type="checkbox" id="inlineCheckbox1" value="option1">选项3</label>
+          <label class="checkbox-inline option"><input type="checkbox" id="inlineCheckbox2" value="option2">选项4</label>
         </div>
         <div class="col-sm-1 btn-wrapper">
           <button class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="common.setIndex(this)">添加项</button>
         </div>
       </div>
-      <div id="f6" class="form-group" draggable="true" ondragstart="drag(event)">
+      <div id="f6" class="form-group" draggable="true" ondragstart="drag(event)" data-type="6">
         <div class="col-sm-2">
           <input type="text" class="form-control" value="文本框">
         </div>
@@ -95,7 +87,7 @@
     <h2>生成区域</h2>
     <div id="createForm" class="create-form" ondrop="drop(event)" ondragover="allowDrop(event)" style="overflow: auto"></div>
     <div class="right-bottom">
-      <button class="btn btn-primary col-sm-2 col-sm-offset-2">保存</button>
+      <button class="btn btn-primary col-sm-2 col-sm-offset-2" onclick="common.submitCreateForm()">保存</button>
       <button class="btn btn-primary col-sm-2 col-sm-offset-4" onclick="common.clearCreateForm()">清空</button>
     </div>
   </div>
@@ -267,6 +259,7 @@
           Array.from($('.form .form-group')).forEach(function (value) {
               if($(value).data('index') === index){
                   optionArr.forEach(function (item, itemIndex) {
+                      item = item.trim()
                       // 目标为select
                       if($(value).find('select').length !== 0){
                           if(itemIndex === 0){
@@ -299,6 +292,39 @@
           Array.from($(me).parents('.btn-wrapper').siblings('.col-sm-9').find('.option')).forEach(function (value) {
               $('.modal-body .items').append('<div class="item"><div class="col-sm-11"><input type="text" class="form-control" value="'+ $(value).text().trim() +'"></div><div class="col-sm-1 delete-row" onclick="deleteRow(this)">X</div></div>')
           })
+      },
+      // 提交生成区域
+      submitCreateForm: function() {
+          var form = []
+          Array.from($('#createForm').find('.form-group')).forEach(function (value) {
+              form.push({
+                  fieldName: $(value).find('label.form-control').text(),
+                  property: ($(value).index() + 2) / 2,
+                  order: $(value).data('type'),
+                  formFieldDictList: (function () {
+                      // 下拉框 单选框 多选框
+                      if($(value).data('type') === 3 || $(value).data('type') === 4 || $(value).data('type') === 5) {
+                          var arr = []
+                          Array.from($(value).find('.option')).forEach(function (itemValue) {
+                              arr.push($(itemValue).text())
+                          })
+                          return arr
+                      }
+                      return []
+                  })()
+              })
+          })
+          var struct = {
+              name: 'form',
+              no: 1,
+              orgId: 1,
+              fieldList: form
+          }
+          var data = {
+              struct: struct,
+              code: $('#createForm')[0].outerHTML
+          }
+          console.log(data)
       },
       // 清空生成区域
       clearCreateForm: function () {
