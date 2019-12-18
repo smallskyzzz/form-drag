@@ -219,7 +219,14 @@
 
   // 模态框添加一行
   function addRow(me) {
-      $(me).parents('.col-sm-12').siblings('.items').append('<div class="item"><div class="col-sm-11"><input type="text" class="form-control"></div><div class="col-sm-1 delete-row" onclick="deleteRow(this)">X</div></div>')
+      var text = $(me).parents('.col-sm-12').siblings('.items').find('.item:last').find('input').val()
+      text === undefined ? '' : text = text.trim()
+      if(text || text === undefined){
+          $(me).parents('.col-sm-12').siblings('.items').append('<div class="item"><div class="col-sm-11"><input type="text" class="form-control"></div><div class="col-sm-1 delete-row" onclick="deleteRow(this)">X</div></div>')
+      } else {
+          $(me).parents('.col-sm-12').siblings('.items').find('.item:last').find('input').val('')
+          common.graduallyAlert('请填写完整')
+      }
   }
 
   // 模态框删除一行
@@ -299,8 +306,8 @@
           Array.from($('#createForm').find('.form-group')).forEach(function (value) {
               form.push({
                   fieldName: $(value).find('label.form-control').text(),
-                  property: ($(value).index() + 2) / 2,
-                  order: $(value).data('type'),
+                  order: ($(value).index() + 2) / 2,
+                  property: $(value).data('type'),
                   formFieldDictList: (function () {
                       // 下拉框 单选框 多选框
                       if($(value).data('type') === 3 || $(value).data('type') === 4 || $(value).data('type') === 5) {
