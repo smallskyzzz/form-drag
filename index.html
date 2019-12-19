@@ -114,7 +114,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="common.submitModal(this)">提交</button>
+        <button type="button" class="btn btn-primary" onclick="common.submitModal(this)">提交</button>
       </div>
     </div>
   </div>
@@ -221,11 +221,16 @@
   function addRow(me) {
       var text = $(me).parents('.col-sm-12').siblings('.items').find('.item:last').find('input').val()
       text === undefined ? '' : text = text.trim()
-      if(text || text === undefined){
-          $(me).parents('.col-sm-12').siblings('.items').append('<div class="item"><div class="col-sm-11"><input type="text" class="form-control"></div><div class="col-sm-1 delete-row" onclick="deleteRow(this)">X</div></div>')
-      } else {
-          $(me).parents('.col-sm-12').siblings('.items').find('.item:last').find('input').val('')
-          common.graduallyAlert('请填写完整')
+      if(common.canSubmit){
+          if((text || text === undefined)){
+              $(me).parents('.col-sm-12').siblings('.items').append('<div class="item"><div class="col-sm-11"><input type="text" class="form-control"></div><div class="col-sm-1 delete-row" onclick="deleteRow(this)">X</div></div>')
+              common.formatInput(text)
+          } else {
+              $(me).parents('.col-sm-12').siblings('.items').find('.item:last').find('input').val('')
+              common.graduallyAlert('请填写完整')
+          }
+      }else {
+          common.graduallyAlert('不能存在相同项')
       }
   }
 
@@ -236,6 +241,8 @@
 
   // 通用方法
   var common = {
+      // 模态框能否提交
+      canSubmit: true,
       // 时间控件初始化
       init: function(id){
           $("#"+id).datetimepicker({//选择年月日
@@ -255,42 +262,72 @@
       graduallyAlert: function (info) {
           $('.alert').hide().text(info).show().fadeOut(2000)
       },
-      // 模态框提交
-      submitModal: function (me) {
-          var optionArr = []
-          // 取到模态框中的值
-          Array.from($(me).parents('.modal').find('.item')).forEach(function (value) {
-              optionArr.push($(value).find('input').val())
-          })
-          // 将模态框中的值赋给对应项
-          Array.from($('.form .form-group')).forEach(function (value) {
-              if($(value).data('index') === index){
-                  optionArr.forEach(function (item, itemIndex) {
-                      item = item.trim()
-                      // 目标为select
-                      if($(value).find('select').length !== 0){
-                          if(itemIndex === 0){
-                              $(value).find('select').html('')
-                          }
-                          $(value).find('select').append('<option class="option">' + item + '</option>')
-                      }
-                      // 目标为单选
-                      if($(value).find('.radio-inline').length !== 0){
-                          if(itemIndex === 0){
-                              $(value).find('.col-sm-9').html('')
-                          }
-                          $(value).find('.col-sm-9').append('<label class="radio-inline option"><input type="radio"  value="option2">' + item + '</label>')
-                      }
-                      // 目标为多选
-                      if($(value).find('.checkbox-inline').length !== 0){
-                          if(itemIndex === 0){
-                              $(value).find('.col-sm-9').html('')
-                          }
-                          $(value).find('.col-sm-9').append('<label class="checkbox-inline option"><input type="checkbox"  value="option2">' + item + '</label>')
-                      }
-                  })
+      // 模态框有无重复项
+      ifModalRepeat: function (str) {
+          var flag = 0
+          Array.from($('.items').find('.item')).forEach(function (value) {
+              if ($(value).find('input').val() === str) {
+                  flag ++
               }
           })
+          if (flag > 1) {
+              common.canSubmit = false
+          } else {
+              common.canSubmit = true
+          }
+      },
+      // 模态框每一项item的input市去焦点时格式化值
+      formatInput: function () {
+          $('.items').find('.item').find('input').unbind().blur(function () {
+              $(this).val($(this).val().trim())
+              common.ifModalRepeat($(this).val())
+              if(!common.canSubmit){
+                  $(this).focus()
+                  common.graduallyAlert('不能存在相同项')
+              }
+          })
+      },
+      // 模态框提交
+      submitModal: function (me) {
+          if(common.canSubmit) {
+              var optionArr = []
+              // 取到模态框中的值
+              Array.from($(me).parents('.modal').find('.item')).forEach(function (value) {
+                  $(value).find('input').val().trim() ? optionArr.push($(value).find('input').val().trim()) : ''
+              })
+              // 将模态框中的值赋给对应项
+              Array.from($('.form .form-group')).forEach(function (value) {
+                  if($(value).data('index') === index){
+                      optionArr.forEach(function (item, itemIndex) {
+                          item = item.trim()
+                          // 目标为select
+                          if($(value).find('select').length !== 0){
+                              if(itemIndex === 0){
+                                  $(value).find('select').html('')
+                              }
+                              $(value).find('select').append('<option class="option">' + item + '</option>')
+                          }
+                          // 目标为单选
+                          if($(value).find('.radio-inline').length !== 0){
+                              if(itemIndex === 0){
+                                  $(value).find('.col-sm-9').html('')
+                              }
+                              $(value).find('.col-sm-9').append('<label class="radio-inline option"><input type="radio"  value="option2">' + item + '</label>')
+                          }
+                          // 目标为多选
+                          if($(value).find('.checkbox-inline').length !== 0){
+                              if(itemIndex === 0){
+                                  $(value).find('.col-sm-9').html('')
+                              }
+                              $(value).find('.col-sm-9').append('<label class="checkbox-inline option"><input type="checkbox"  value="option2">' + item + '</label>')
+                          }
+                      })
+                  }
+              })
+              $('#myModal').modal('hide')
+          }else {
+              common.graduallyAlert('不能存在相同项')
+          }
       },
       // 设置index,并将对应的值加入到modal中
       setIndex: function (me) {
@@ -343,7 +380,7 @@
   }
 
   $(function () {
-      common.init('pickTime', '')
+      common.init('pickTime')
   })
 </script>
 </body>
